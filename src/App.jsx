@@ -383,7 +383,13 @@ const CreatorView = ({ onCopyLink }) => {
       theme: stickerTheme,
     };
     const encoded = encodePayload(payload);
-    const link = `${window.location.origin}/?data=${encodeURIComponent(encoded)}`;
+    const basePath = import.meta.env.BASE_URL || "/";
+    const normalizedBase = basePath.endsWith("/")
+      ? basePath
+      : `${basePath}/`;
+    const link = `${window.location.origin}${normalizedBase}?data=${encodeURIComponent(
+      encoded
+    )}`;
 
     let copied = false;
     try {
