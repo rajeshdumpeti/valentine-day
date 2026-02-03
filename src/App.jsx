@@ -1325,7 +1325,7 @@ const ReceiverView = ({ payload, error }) => {
                 </div>
               </div>
               <p className="mt-3 text-xs text-wine/40 text-center">
-                Keep going! The "No" button gets slower after 15 clicks 😉
+                Keep going! The "No" button gets slower after 10 clicks 😉
               </p>
             </motion.div>
           </motion.div>
