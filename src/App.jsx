@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { useEffect, useMemo, useRef, useState } from "react";
 import html2canvas from "html2canvas";
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
 import {
   Upload,
   Sparkles,
@@ -30,23 +31,13 @@ const glitchAnim = {
   }
 };
 
-const toBase64 = (value) => btoa(unescape(encodeURIComponent(value)));
-const fromBase64 = (value) => decodeURIComponent(escape(atob(value)));
-
 const CLOUDINARY_CLOUD_NAME = "decwtrskq";
 const CLOUDINARY_UPLOAD_PRESET = "valentine";
 
-const toBase64Url = (value) =>
-  toBase64(value).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-const fromBase64Url = (value) => {
-  const padded = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padLength = (4 - (padded.length % 4)) % 4;
-  const withPadding = padded + "=".repeat(padLength);
-  return fromBase64(withPadding);
-};
-
-const encodePayload = (payload) => toBase64Url(JSON.stringify(payload));
-const decodePayload = (payload) => JSON.parse(fromBase64Url(payload));
+const encodePayload = (payload) =>
+  compressToEncodedURIComponent(JSON.stringify(payload));
+const decodePayload = (payload) =>
+  JSON.parse(decompressFromEncodedURIComponent(payload));
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const randomInRange = (min, max) => Math.random() * (max - min) + min;
@@ -388,9 +379,7 @@ const CreatorView = ({ onCopyLink }) => {
     const normalizedBase = basePath.endsWith("/")
       ? basePath
       : `${basePath}/`;
-    const link = `${window.location.origin}${normalizedBase}foryou?data=${encodeURIComponent(
-      encoded
-    )}`;
+    const link = `${window.location.origin}${normalizedBase}foryou#d=${encoded}`;
 
     let copied = false;
     try {
@@ -1584,7 +1573,18 @@ export default function App() {
       }
     }
 
-    const dataParam = new URLSearchParams(searchToUse).get("data");
+    const paramsForData = new URLSearchParams(searchToUse);
+    let dataParam = paramsForData.get("data") || paramsForData.get("d");
+
+    if (!dataParam && window.location.hash) {
+      const hash = window.location.hash.replace(/^#/, "");
+      const hashParams = new URLSearchParams(hash);
+      dataParam = hashParams.get("d") || hashParams.get("data");
+      if (!dataParam && hash.startsWith("d=")) {
+        dataParam = hash.slice(2);
+      }
+    }
+
     if (!dataParam) return;
 
     try {
