@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { useEffect, useMemo, useRef, useState } from "react";
+import html2canvas from "html2canvas";
 import {
   Upload,
   Sparkles,
@@ -973,8 +974,11 @@ const ReceiverView = ({ payload, error }) => {
   const [showHearts, setShowHearts] = useState(false);
   const [buttonClickCount, setButtonClickCount] = useState(0);
   const [insults, setInsults] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const noButtonRef = useRef(null);
   const yesWrapRef = useRef(null);
+  const cardRef = useRef(null);
 
   const fleeInsults = [
     "Wow, rude much? 😒",
@@ -1099,6 +1103,28 @@ const ReceiverView = ({ payload, error }) => {
     const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3');
     audio.volume = 0.3;
     audio.play().catch(() => { });
+  };
+
+  const handleSaveMemory = async () => {
+    if (!cardRef.current || saving) return;
+    setSaving(true);
+    setSaveError("");
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        useCORS: true,
+        backgroundColor: null,
+        scale: 2,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "valentine-memory.png";
+      link.click();
+    } catch (error) {
+      setSaveError("Couldn't save the image. Try a screenshot instead.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (error) {
@@ -1345,7 +1371,10 @@ const ReceiverView = ({ payload, error }) => {
           >
             <PixelRain active={showHearts} />
 
-            <div className="glass-card rounded-[2.5rem] p-6 sm:p-10 shadow-2xl border border-white/30 backdrop-blur-sm">
+            <div
+              ref={cardRef}
+              className="glass-card rounded-[2.5rem] p-6 sm:p-10 shadow-2xl border border-white/30 backdrop-blur-sm"
+            >
               <motion.div
                 initial={{ rotate: -180, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}
@@ -1403,6 +1432,7 @@ const ReceiverView = ({ payload, error }) => {
                     <img
                       src={payload.imageUrl}
                       alt="Vibe Card"
+                      crossOrigin="anonymous"
                       className="h-72 w-full object-cover sm:h-80"
                     />
                   ) : (
@@ -1465,13 +1495,14 @@ const ReceiverView = ({ payload, error }) => {
                 className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm font-medium text-wine/70"
               >
                 <button
-                  onClick={() => window.print()}
+                  type="button"
+                  onClick={handleSaveMemory}
                   className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 hover:bg-white transition-all"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
-                  Save This Memory
+                  {saving ? "Saving..." : "Save This Memory"}
                 </button>
 
                 <button
@@ -1492,6 +1523,11 @@ const ReceiverView = ({ payload, error }) => {
                   Flex on Socials
                 </button>
               </motion.div>
+              {saveError && (
+                <p className="mt-2 text-xs font-semibold text-rose">
+                  {saveError}
+                </p>
+              )}
             </div>
 
             <motion.div
