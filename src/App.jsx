@@ -387,7 +387,7 @@ const CreatorView = ({ onCopyLink }) => {
     const normalizedBase = basePath.endsWith("/")
       ? basePath
       : `${basePath}/`;
-    const link = `${window.location.origin}${normalizedBase}?data=${encodeURIComponent(
+    const link = `${window.location.origin}${normalizedBase}foryou?data=${encodeURIComponent(
       encoded
     )}`;
 
@@ -1523,7 +1523,32 @@ export default function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const dataParam = params.get("data");
+    const redirectParam = params.get("redirect");
+
+    let searchToUse = window.location.search;
+    if (redirectParam) {
+      try {
+        const redirectUrl = new URL(redirectParam, window.location.origin);
+        const basePath = import.meta.env.BASE_URL || "/";
+        const normalizedBase = basePath.endsWith("/")
+          ? basePath
+          : `${basePath}/`;
+        const normalizedPath = redirectUrl.pathname.startsWith("/")
+          ? redirectUrl.pathname
+          : `${normalizedBase}${redirectUrl.pathname}`;
+
+        window.history.replaceState(
+          {},
+          "",
+          `${normalizedPath}${redirectUrl.search}${redirectUrl.hash}`
+        );
+        searchToUse = redirectUrl.search || "";
+      } catch (error) {
+        searchToUse = window.location.search;
+      }
+    }
+
+    const dataParam = new URLSearchParams(searchToUse).get("data");
     if (!dataParam) return;
 
     try {
