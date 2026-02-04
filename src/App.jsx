@@ -1498,7 +1498,7 @@ const ReceiverView = ({ payload, error }) => {
                 transition={{ duration: 0.6 }}
                 className="font-display text-4xl sm:text-6xl text-wine"
               >
-                <GlitchText>They said YES!</GlitchText> 💘
+                <GlitchText>Surprise opened!</GlitchText> 💌
               </motion.h3>
 
               <motion.p
@@ -1507,7 +1507,7 @@ const ReceiverView = ({ payload, error }) => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="mt-3 text-wine/70 sm:text-lg"
               >
-                It worked! Here's your official love card.
+                Your message landed—here’s the love card.
               </motion.p>
 
               <motion.div
