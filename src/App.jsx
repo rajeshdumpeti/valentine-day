@@ -256,12 +256,14 @@ const CreatorView = ({ onCopyLink }) => {
   const [selectedSuggestion, setSelectedSuggestion] = useState("");
   const [step, setStep] = useState(0);
   const [stickerTheme, setStickerTheme] = useState("kawaii");
-  const [toast, setToast] = useState(false);
   const [imageError, setImageError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [memeTemplate, setMemeTemplate] = useState("");
   const [showPixelRain, setShowPixelRain] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareLink, setShareLink] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
 
   const messageSuggestions = [
     "You make ordinary days feel special.",
@@ -389,13 +391,12 @@ const CreatorView = ({ onCopyLink }) => {
       copied = false;
     }
 
-    if (!copied) {
-      window.prompt("Copy this link (no cap):", link);
-    }
-
-    setToast(true);
+    setShareLink(link);
+    setCopyStatus(
+      copied ? "Link copied to clipboard." : "Copy the link below."
+    );
+    setShareModalOpen(true);
     onCopyLink?.(link);
-    window.setTimeout(() => setToast(false), 2400);
   };
 
   const uploadToCloudinary = (file) =>
@@ -861,7 +862,7 @@ const CreatorView = ({ onCopyLink }) => {
                   className="group relative rounded-full bg-gradient-to-r from-rose to-pink-400 px-8 py-4 text-lg font-bold text-white shadow-2xl transition-all hover:shadow-[0_0_40px_rgba(255,107,139,0.4)]"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    Cast the Spell
+                    Create Surprise Link
                     <Sparkles className="h-5 w-5 group-hover:rotate-12 transition-transform" />
                   </span>
                   <span className="absolute -right-2 -top-2 opacity-0 group-hover:opacity-100 transition-opacity text-2xl">
@@ -937,17 +938,89 @@ const CreatorView = ({ onCopyLink }) => {
       </div>
 
       <AnimatePresence>
-        {toast && (
+        {shareModalOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-6 right-6 rounded-2xl bg-gradient-to-r from-rose to-pink-400 px-6 py-3 text-sm font-bold text-white shadow-2xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
           >
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-4 w-4" />
-              <span>Link copied! Share your surprise 💌</span>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.98 }}
+              className="w-full max-w-lg rounded-3xl border border-rose/20 bg-white p-6 shadow-2xl"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="font-display text-2xl text-wine">
+                    Your surprise link is ready
+                  </h3>
+                  <p className="mt-1 text-sm text-wine/70">
+                    Share it with your loved one or save it for later.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShareModalOpen(false)}
+                  className="rounded-full border border-rose/30 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wine hover:bg-rose/10"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-rose/20 bg-rose/5 p-3">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose">
+                  Share Link
+                </p>
+                <input
+                  value={shareLink}
+                  readOnly
+                  className="mt-2 w-full rounded-xl border border-rose/20 bg-white px-3 py-2 text-xs text-wine"
+                />
+                {copyStatus && (
+                  <p className="mt-2 text-xs text-wine/70">{copyStatus}</p>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(shareLink);
+                      setCopyStatus("Link copied to clipboard.");
+                    } catch (error) {
+                      setCopyStatus("Copy failed. Please copy manually.");
+                    }
+                  }}
+                  className="rounded-full bg-wine px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white"
+                >
+                  Copy Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.open(shareLink, "_blank")}
+                  className="rounded-full border border-rose/30 bg-white px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine"
+                >
+                  Open Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const message =
+                      "I made a small Valentine surprise for you 💌 ";
+                    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+                      `${message}${shareLink}`
+                    )}`;
+                    window.open(whatsappUrl, "_blank");
+                  }}
+                  className="rounded-full bg-gradient-to-r from-rose to-pink-400 px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white"
+                >
+                  Share on WhatsApp
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
