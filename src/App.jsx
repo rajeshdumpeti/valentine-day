@@ -267,6 +267,7 @@ const CreatorView = ({ onCopyLink }) => {
   const [linkName, setLinkName] = useState("");
   const [copiedAnim, setCopiedAnim] = useState(false);
   const [chatgptStatus, setChatgptStatus] = useState("");
+  const [chatgptAnim, setChatgptAnim] = useState(false);
 
   const messageSuggestions = [
     "You make ordinary days feel special.",
@@ -577,14 +578,19 @@ const CreatorView = ({ onCopyLink }) => {
                           "Open ChatGPT and paste this prompt: " + prompt
                         );
                       }
+                      setChatgptAnim(true);
+                      window.setTimeout(() => setChatgptAnim(false), 900);
                       window.open("https://chatgpt.com/", "_blank", "noopener");
                     }}
-                    className="rounded-full border-2 border-rose/30 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine hover:border-rose/60 transition-all"
+                    className={`rounded-full border-2 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine transition-all ${chatgptAnim
+                      ? "border-green-400 shadow-lg scale-[1.02]"
+                      : "border-rose/30 hover:border-rose/60"
+                      }`}
                   >
-                    Get Message Ideas (ChatGPT)
+                    {chatgptAnim ? "Opening ChatGPT..." : "Get Message Ideas (ChatGPT)"}
                   </button>
                   {chatgptStatus && (
-                    <span className="text-xs text-wine/60">{chatgptStatus}</span>
+                    <span className="text-xs text-wine/60">{chatgptStatus} </span>
                   )}
                 </div>
 
@@ -964,7 +970,8 @@ const CreatorView = ({ onCopyLink }) => {
                   onClick={() => {
                     const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3');
                     audio.play().catch(() => { });
-                    goNext();
+                    setStep(0);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   className="rounded-full border-2 border-rose bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-rose hover:bg-rose/10 transition-all"
                 >
@@ -1040,8 +1047,8 @@ const CreatorView = ({ onCopyLink }) => {
                     }
                   }}
                   className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all ${copiedAnim
-                      ? "bg-green-500 scale-105 shadow-lg"
-                      : "bg-wine"
+                    ? "bg-green-500 scale-105 shadow-lg"
+                    : "bg-wine"
                     }`}
                 >
                   {copiedAnim ? "Copied!" : "Copy Link"}
@@ -1294,7 +1301,7 @@ const ReceiverView = ({ payload, error }) => {
 
             <motion.h2
               {...fadeInUp}
-              className="font-display text-4xl sm:text-7xl text-wine bg-gradient-to-r from-wine to-purple-900 bg-clip-text text-transparent"
+              className="font-display text-4xl sm:text-7xl text-wine"
             >
               Hey <GlitchText>{payload.name}</GlitchText>,
               <br />
