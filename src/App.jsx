@@ -267,6 +267,7 @@ const CreatorView = ({ onCopyLink }) => {
   const [linkName, setLinkName] = useState("");
   const [copiedAnim, setCopiedAnim] = useState(false);
   const [chatgptStatus, setChatgptStatus] = useState("");
+  const [chatgptAnim, setChatgptAnim] = useState(false);
 
   const messageSuggestions = [
     "You make ordinary days feel special.",
@@ -577,11 +578,17 @@ const CreatorView = ({ onCopyLink }) => {
                           "Open ChatGPT and paste this prompt: " + prompt
                         );
                       }
+                      setChatgptAnim(true);
+                      window.setTimeout(() => setChatgptAnim(false), 900);
                       window.open("https://chatgpt.com/", "_blank", "noopener");
                     }}
-                    className="rounded-full border-2 border-rose/30 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine hover:border-rose/60 transition-all"
+                    className={`rounded-full border-2 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine transition-all ${
+                      chatgptAnim
+                        ? "border-green-400 shadow-lg scale-[1.02]"
+                        : "border-rose/30 hover:border-rose/60"
+                    }`}
                   >
-                    Get Message Ideas (ChatGPT)
+                    {chatgptAnim ? "Opening ChatGPT..." : "Get Message Ideas (ChatGPT)"}
                   </button>
                   {chatgptStatus && (
                     <span className="text-xs text-wine/60">{chatgptStatus}</span>
