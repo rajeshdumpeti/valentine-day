@@ -1301,11 +1301,17 @@ const ReceiverView = ({ payload, error }) => {
 
             <motion.h2
               {...fadeInUp}
-              className="font-display text-4xl sm:text-7xl text-wine"
+              className="text-wine"
             >
-              Hey <GlitchText>{payload.name}</GlitchText>,
-              <br />
-              <span className="text-rose">I made something for you.</span> 🎁
+              <span className="block text-xs sm:text-sm font-bold uppercase tracking-[0.35em] text-wine/70">
+                Hey
+              </span>
+              <span className="block font-display text-4xl sm:text-7xl">
+                <GlitchText>{payload.name}</GlitchText>
+              </span>
+              <span className="mt-3 block font-display text-xl sm:text-2xl text-rose">
+                I made something for you. 🎁
+              </span>
             </motion.h2>
 
             <motion.p
