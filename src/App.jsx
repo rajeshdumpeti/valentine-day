@@ -572,7 +572,7 @@ const CreatorView = ({ onCopyLink }) => {
                       const prompt = `Write 5 short Valentine surprise messages ${recipient}. Keep them warm, respectful, and inclusive for spouse, partner, best friend, or family. Each message should be 1-2 sentences.`;
                       try {
                         await navigator.clipboard.writeText(prompt);
-                        setChatgptStatus("Prompt copied. Paste it into ChatGPT.");
+                        setChatgptStatus("Prompt copied ✅ Paste it into ChatGPT.");
                       } catch (error) {
                         setChatgptStatus(
                           "Open ChatGPT and paste this prompt: " + prompt
@@ -590,7 +590,7 @@ const CreatorView = ({ onCopyLink }) => {
                     {chatgptAnim ? "Opening ChatGPT..." : "Get Message Ideas (ChatGPT)"}
                   </button>
                   {chatgptStatus && (
-                    <span className="text-xs text-wine/60">{chatgptStatus} </span>
+                    <span className="text-xs text-wine/60">{chatgptStatus}</span>
                   )}
                 </div>
 
@@ -1260,7 +1260,6 @@ const ReceiverView = ({ payload, error }) => {
   return (
     <div className="relative min-h-screen overflow-hidden px-4 py-8">
       <FloatingElements />
-      <div className="absolute inset-0 bg-gradient-to-br from-soft via-white to-pink-50" />
       <div className="noise-layer absolute inset-0 opacity-5" />
 
       <AnimatePresence mode="wait">
@@ -1299,20 +1298,20 @@ const ReceiverView = ({ payload, error }) => {
               </div>
             </motion.div>
 
-            <motion.h2
+            <motion.div
               {...fadeInUp}
               className="text-wine"
             >
               <span className="block text-xs sm:text-sm font-bold uppercase tracking-[0.35em] text-wine/70">
                 Hey
               </span>
-              <span className="block font-display text-4xl sm:text-7xl">
-                <GlitchText>{payload.name}</GlitchText>
+              <span className="block font-display text-4xl sm:text-7xl text-wine">
+                {payload.name}
               </span>
               <span className="mt-3 block font-display text-xl sm:text-2xl text-rose">
                 I made something for you. 🎁
               </span>
-            </motion.h2>
+            </motion.div>
 
             <motion.p
               {...fadeInUp}
