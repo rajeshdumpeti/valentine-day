@@ -199,7 +199,7 @@ const VibePlayer = ({ vibe }) => {
       <div className="flex items-center gap-3 mb-3">
         <Music size={20} className="text-rose" />
         <span className="text-sm font-bold uppercase tracking-wider text-rose">
-          Vibe Playlist
+          Mood Playlist
         </span>
         <div className="flex-1 h-px bg-rose/20"></div>
       </div>
@@ -264,21 +264,21 @@ const CreatorView = ({ onCopyLink }) => {
   const [showPixelRain, setShowPixelRain] = useState(false);
 
   const messageSuggestions = [
-    "You're my Roman Empire",
-    "Rizz level: You",
-    "No cap, you're my favorite person fr",
-    "Lowkey obsessed with you",
-    "It's giving soulmate",
-    "You're my ick cure",
-    "Main character energy with you",
-    "You're my glitch in the matrix",
+    "You make ordinary days feel special.",
+    "I’m grateful for you—today and always.",
+    "You’re my favorite hello and sweetest goodbye.",
+    "Life feels lighter with you in it.",
+    "You make my heart smile.",
+    "Thank you for being you.",
+    "Every day with you is a gift.",
+    "You’re my safe place.",
   ];
 
   const steps = [
-    { id: "name", label: "Vibe Check", rune: "👀", icon: Zap },
-    { id: "message", label: "Rizz Level", rune: "💬", icon: Flame },
-    { id: "image", label: "Aesthetic", rune: "🖼️", icon: Sparkles },
-    { id: "preview", label: "Send It", rune: "✈️", icon: PartyPopper },
+    { id: "name", label: "Recipient", rune: "👀", icon: Zap },
+    { id: "message", label: "Message", rune: "💬", icon: Flame },
+    { id: "image", label: "Photo", rune: "🖼️", icon: Sparkles },
+    { id: "preview", label: "Preview", rune: "✈️", icon: PartyPopper },
   ];
 
   const stickerThemes = [
@@ -291,15 +291,15 @@ const CreatorView = ({ onCopyLink }) => {
 
   const vibeKeywords = {
     softie: ["sweet", "love", "forever", "heart", "cute", "darling", "soft"],
-    chaos: ["obsessed", "wild", "crazy", "chaos", "spicy", "toxic", "unhinged"],
-    main: ["icon", "main", "slay", "queen", "king", "legend", "vibe", "rizz"],
+    chaos: ["playful", "silly", "wild", "bold", "funny", "adventure", "spark"],
+    main: ["icon", "star", "queen", "king", "legend", "vibe", "glow"],
   };
 
   const getVibe = (text) => {
     const value = text.toLowerCase();
     let score = clamp(value.length * 3, 0, 70);
-    let label = "Softie Era";
-    let tag = "Cinnamon roll energy 🍥";
+    let label = "Sweet & Soft";
+    let tag = "Warm and tender energy 💗";
     let icon = "😊";
 
     const hasSoftie = vibeKeywords.softie.some((word) => value.includes(word));
@@ -312,20 +312,20 @@ const CreatorView = ({ onCopyLink }) => {
     score = clamp(score, 0, 100);
 
     if (hasChaos || score > 85) {
-      label = "Chaos Mode";
-      tag = "Unhinged in a hot way 😈";
+      label = "Playful Spark";
+      tag = "Light, fun, and a little bold ✨";
       icon = "😈";
     } else if (hasMain || score > 65) {
-      label = "Main Character";
-      tag = "Slay all day 💅";
+      label = "Star Energy";
+      tag = "Confident and glowing ✨";
       icon = "👑";
     } else if (score > 35) {
-      label = "Softie Era";
+      label = "Sweet & Soft";
       tag = "Warm and fuzzy 🥰";
       icon = "🌸";
     } else {
-      label = "Lowkey Cute";
-      tag = "Simple but effective ✨";
+      label = "Simple & Sweet";
+      tag = "Short, sweet, and sincere ✨";
       icon = "😌";
     }
 
@@ -334,8 +334,8 @@ const CreatorView = ({ onCopyLink }) => {
 
   const vibe = getVibe(message.trim());
   const lastStep = steps.length - 1;
-  const previewName = name.trim() || "Bae";
-  const previewMessage = message.trim() || "You're my Roman Empire.";
+  const previewName = name.trim() || "Valentine";
+  const previewMessage = message.trim() || "You make my heart smile.";
   const previewImage = imageMode === "url" ? imageUrl.trim() : imagePreview;
   const activeSticker =
     stickerThemes.find((theme) => theme.id === stickerTheme) ||
@@ -354,7 +354,7 @@ const CreatorView = ({ onCopyLink }) => {
   const handleGenerate = async (event) => {
     event.preventDefault();
     if (imageMode === "upload" && uploading) {
-      setImageError("Wait for upload, bestie! ⏳");
+      setImageError("Please wait for the upload to finish. ⏳");
       return;
     }
 
@@ -368,8 +368,8 @@ const CreatorView = ({ onCopyLink }) => {
 
     const finalImage = imageUrl.trim();
     const payload = {
-      name: name.trim() || "Bae",
-      message: message.trim() || "You're my Roman Empire.",
+      name: name.trim() || "Valentine",
+      message: message.trim() || "You make my heart smile.",
       imageUrl: finalImage,
       vibe: vibe.label,
       theme: stickerTheme,
@@ -441,14 +441,14 @@ const CreatorView = ({ onCopyLink }) => {
 
       <motion.div {...fadeInUp}>
         <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose/20 to-pink-400/20 backdrop-blur-sm px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-rose">
-          Digital Rizz ✨
+          Valentine Surprise ✨
           <span className="text-base">🔮</span>
         </div>
         <h1 className="mt-5 font-display text-4xl sm:text-7xl text-wine">
-          Create Your <GlitchText>Vibe Card</GlitchText>
+          Create a <GlitchText>Surprise Love Card</GlitchText>
         </h1>
         <p className="mt-3 max-w-2xl text-base text-wine/70 sm:text-lg">
-          Slide into their DMs with style. No cap, this is the rizz you need.
+          Make a sweet surprise link for your wife, partner, best friend, or anyone you love.
         </p>
       </motion.div>
 
@@ -476,7 +476,7 @@ const CreatorView = ({ onCopyLink }) => {
                 })}
               </div>
               <span className="text-xs font-bold uppercase tracking-[0.3em] text-rose bg-white/60 px-3 py-1 rounded-full">
-                Level {step + 1}/{steps.length}
+                Step {step + 1}/{steps.length}
               </span>
             </div>
 
@@ -494,23 +494,23 @@ const CreatorView = ({ onCopyLink }) => {
             {step === 0 && (
               <motion.div {...fadeInUp} className="grid gap-5">
                 <h2 className="font-display text-3xl text-wine">
-                  Who's the <span className="text-rose">main character</span>?
+                  Who is this <span className="text-rose">for</span>?
                 </h2>
                 <label className="grid gap-2 text-sm font-bold text-wine/80">
-                  Their @
+                  Their Name
                   <input
                     className="rounded-2xl border-2 border-rose/20 bg-white/80 px-4 py-3 text-base text-wine outline-none transition-all focus:border-rose focus:ring-4 focus:ring-rose/20"
-                    placeholder="Their name or @"
+                    placeholder="Their name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                   />
                 </label>
                 <div className="grid gap-3 rounded-2xl border-2 border-dashed border-rose/20 bg-gradient-to-br from-white/50 to-rose/5 p-5">
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                    Quick Tags
+                    Quick Picks
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {["Bae", "Bestie", "Crush", "Cutie", "My Person", "Partner in Crime"].map((tag) => (
+                    {["Wife", "Husband", "Partner", "Best Friend", "Mom", "Dad", "Sister", "Brother", "Friend"].map((tag) => (
                       <button
                         key={tag}
                         type="button"
@@ -529,10 +529,10 @@ const CreatorView = ({ onCopyLink }) => {
               <motion.div {...fadeInUp} className="grid gap-6">
                 <div>
                   <h2 className="font-display text-3xl text-wine">
-                    Drop your <span className="text-rose">rizz line</span>
+                    Write a <span className="text-rose">sweet message</span>
                   </h2>
                   <p className="text-sm text-wine/70">
-                    Keep it real or go full delulu. We don't judge.
+                    Keep it heartfelt, funny, or simple—whatever feels right.
                   </p>
                 </div>
 
@@ -541,7 +541,7 @@ const CreatorView = ({ onCopyLink }) => {
                   <textarea
                     rows={3}
                     className="rounded-2xl border-2 border-rose/20 bg-white/80 px-4 py-3 text-base text-wine outline-none transition-all focus:border-rose focus:ring-4 focus:ring-rose/20 resize-none"
-                    placeholder="Type your rizz here..."
+                    placeholder="Type your message here..."
                     value={message}
                     onChange={(event) => {
                       setMessage(event.target.value);
@@ -552,7 +552,7 @@ const CreatorView = ({ onCopyLink }) => {
 
                 <div className="grid gap-3 rounded-2xl border-2 border-rose/10 bg-gradient-to-br from-white/60 to-rose/5 p-5">
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                    Pre-written Rizz
+                    Message Ideas
                   </p>
                   <div className="grid gap-2">
                     {messageSuggestions.map((suggestion) => (
@@ -578,7 +578,7 @@ const CreatorView = ({ onCopyLink }) => {
                   <div className="glass-card rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                        Vibe Check
+                        Mood Check
                       </span>
                       <span className="text-2xl">{vibe.icon}</span>
                     </div>
@@ -609,10 +609,10 @@ const CreatorView = ({ onCopyLink }) => {
               <motion.div {...fadeInUp} className="grid gap-6">
                 <div>
                   <h2 className="font-display text-3xl text-wine">
-                    Set the <span className="text-rose">aesthetic</span>
+                    Add a <span className="text-rose">photo</span> (optional)
                   </h2>
                   <p className="text-sm text-wine/70">
-                    Upload a pic or use a meme template. It's giving ✨
+                    Upload a photo or choose a playful template.
                   </p>
                 </div>
 
@@ -815,7 +815,7 @@ const CreatorView = ({ onCopyLink }) => {
                     Hey <GlitchText>{previewName}</GlitchText>, will you be my Valentine?
                   </h3>
                   <p className="mt-2 text-sm text-wine/60 relative z-10">
-                    This is exactly how they'll see your vibe card
+                    This is exactly how they'll see your love card
                   </p>
 
                   <div className="mt-6 grid gap-6 sm:grid-cols-2 sm:items-center relative z-10">
@@ -844,7 +844,7 @@ const CreatorView = ({ onCopyLink }) => {
                         </div>
                         <div>
                           <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                            Vibe: {vibe.label}
+                          Mood: {vibe.label}
                           </p>
                           <p className="text-xs text-wine/60">Sent with 💖</p>
                         </div>
@@ -946,7 +946,7 @@ const CreatorView = ({ onCopyLink }) => {
           >
             <div className="flex items-center gap-3">
               <Sparkles className="h-4 w-4" />
-              <span>Link copied! Time to slide into DMs 🫣</span>
+              <span>Link copied! Share your surprise 💌</span>
             </div>
           </motion.div>
         )}
@@ -970,36 +970,28 @@ const ReceiverView = ({ payload, error }) => {
   const cardRef = useRef(null);
 
   const fleeInsults = [
-    "Wow, rude much? 😒",
+    "Nice try! 😅",
     "Can't catch me! 🏃‍♂️",
-    "Try harder bestie 💅",
-    "Skill issue 😏",
-    "L + ratio + you missed",
+    "Almost! Try again 💫",
+    "Too slow! 🐢",
     "I'm shy! 👉👈",
     "Nope, try again 🔄",
     "You're gonna have to do better than that",
     "✨ Manifesting your miss ✨",
     "This button has commitment issues",
-    "My disappointment is immeasurable",
-    "I'm just a little guy 🥺",
     "Error 404: Will not comply",
     "Access denied ⛔",
-    "Too slow! 🐢",
     "Are you even trying?",
-    "This is embarrassing for you",
     "My wifi is lagging ✨",
     "I have plans... to not be caught",
-    "Not today, Satan 👿",
-    "I'm listening to Taylor Swift ✨",
-    "Read the room, bestie",
-    "The rizz isn't rizzing",
+    "Not today 👿",
+    "Read the room 😌",
     "You have to earn this W",
     "My social battery is low 🔋",
-    "I'm in my flop era",
-    "The ick is real",
+    "I'm in my sleepy era",
     "Catch these hands instead 👏",
     "I'm not like other buttons",
-    "Main character energy ✨"
+    "Star energy ✨"
   ];
 
   const moveNoButton = () => {
@@ -1121,15 +1113,15 @@ const ReceiverView = ({ payload, error }) => {
       <div className="flex min-h-screen items-center justify-center px-6">
         <div className="max-w-md rounded-3xl border-2 border-rose/20 bg-white/90 p-8 text-center shadow-2xl">
           <div className="text-5xl mb-4">💔</div>
-          <h2 className="font-display text-3xl text-wine">Link is Dead</h2>
+          <h2 className="font-display text-3xl text-wine">Link Not Found</h2>
           <p className="mt-3 text-wine/70">
-            This vibe card expired or got lost in the digital void.
+            This love card expired or the link is invalid.
           </p>
           <a
             href="/"
             className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose to-pink-400 px-6 py-3 text-sm font-bold text-white hover:shadow-lg transition-all"
           >
-            Create Your Own Vibe
+            Create Your Own Love Card
             <Sparkles className="h-4 w-4" />
           </a>
         </div>
@@ -1159,7 +1151,7 @@ const ReceiverView = ({ payload, error }) => {
               className="mb-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose/20 via-pink-400/20 to-purple-400/20 backdrop-blur-sm px-4 py-2 text-xs font-bold uppercase tracking-[0.3em] text-rose shadow-lg"
             >
               <Sparkles className="h-3 w-3" />
-              Vibe Check Protocol Activated
+              Love Note Incoming
               <Zap className="h-3 w-3" />
             </motion.div>
 
@@ -1175,7 +1167,7 @@ const ReceiverView = ({ payload, error }) => {
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose">
                   Incoming Message
                 </p>
-                <p className="text-sm text-wine/70">From your secret admirer</p>
+                <p className="text-sm text-wine/70">From someone who cares about you</p>
               </div>
             </motion.div>
 
@@ -1342,7 +1334,7 @@ const ReceiverView = ({ payload, error }) => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-green-600">{Math.floor(buttonClickCount * 1.5)}</p>
-                  <p className="text-xs text-wine/60">Rizz Points</p>
+                  <p className="text-xs text-wine/60">Love Points</p>
                 </div>
               </div>
               <p className="mt-3 text-xs text-wine/40 text-center">
@@ -1388,7 +1380,7 @@ const ReceiverView = ({ payload, error }) => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="mt-3 text-wine/70 sm:text-lg"
               >
-                The rizz worked! Here's your official vibe card.
+                It worked! Here's your official love card.
               </motion.p>
 
               <motion.div
@@ -1397,7 +1389,7 @@ const ReceiverView = ({ payload, error }) => {
                 transition={{ duration: 0.7, delay: 0.15 }}
                 className="mt-6 flex flex-wrap justify-center gap-3"
               >
-                {["Enchanted AF", "Vibe: Locked", "Rizz: Successful", "Hearts: Full"].map((badge, i) => (
+                {["Enchanted", "Mood: Locked", "Message: Sent", "Hearts: Full"].map((badge, i) => (
                   <motion.span
                     key={badge}
                     initial={{ opacity: 0, scale: 0 }}
@@ -1420,7 +1412,7 @@ const ReceiverView = ({ payload, error }) => {
                   {payload.imageUrl ? (
                     <img
                       src={payload.imageUrl}
-                      alt="Vibe Card"
+                      alt="Love Card"
                       crossOrigin="anonymous"
                       className="h-72 w-full object-cover sm:h-80"
                     />
@@ -1459,7 +1451,7 @@ const ReceiverView = ({ payload, error }) => {
                     <div className="flex items-center gap-2 text-sm text-wine/70">
                       <span className="inline-flex items-center gap-1">
                         <Zap className="h-4 w-4" />
-                        Vibe: {payload.vibe || "Perfect"}
+                        Mood: {payload.vibe || "Perfect"}
                       </span>
                       <span>•</span>
                       <span className="inline-flex items-center gap-1">
@@ -1471,7 +1463,7 @@ const ReceiverView = ({ payload, error }) => {
 
                   <div className="pt-4 border-t border-rose/10">
                     <p className="text-sm text-wine/60">
-                      Screenshot this moment, share the W, and keep the magic going.
+                      Save this moment and share the love.
                     </p>
                   </div>
                 </motion.div>
@@ -1498,8 +1490,8 @@ const ReceiverView = ({ payload, error }) => {
                   onClick={() => {
                     if (navigator.share) {
                       navigator.share({
-                        title: 'Check out my vibe card!',
-                        text: `${payload.name} just received this digital Valentine!`,
+                        title: "A Valentine surprise for you!",
+                        text: `${payload.name} just received a sweet Valentine surprise!`,
                         url: window.location.href,
                       });
                     }
@@ -1526,13 +1518,13 @@ const ReceiverView = ({ payload, error }) => {
               className="text-center"
             >
               <p className="text-sm text-wine/40">
-                Made with 💖 using digital rizz technology
+                Made with 💖 for a Valentine surprise
               </p>
               <a
                 href="/"
                 className="inline-block mt-4 text-sm font-medium text-rose hover:text-wine transition-colors"
               >
-                Create your own vibe card →
+                Create your own love card →
               </a>
             </motion.div>
           </motion.div>
@@ -1591,7 +1583,7 @@ export default function App() {
       const decoded = decodePayload(dataParam);
       setPayload(decoded);
     } catch (decodeError) {
-      setError("Invalid vibe card data");
+      setError("Invalid love card data");
     }
   }, []);
 
@@ -1665,7 +1657,16 @@ export default function App() {
       <div className="pointer-events-none absolute -left-16 top-24 -z-10 h-64 w-64 rounded-full bg-rose/25 blur-[100px]" />
       <div className="pointer-events-none absolute -right-10 bottom-10 -z-10 h-72 w-72 rounded-full bg-pink-300/30 blur-[120px]" />
       {showReceiver ? (
-        <ReceiverView payload={payload ?? { name: "Bae", message: "You're my Roman Empire.", vibe: "Perfect Match" }} error={error} />
+        <ReceiverView
+          payload={
+            payload ?? {
+              name: "Valentine",
+              message: "You make my heart smile.",
+              vibe: "Perfect Match",
+            }
+          }
+          error={error}
+        />
       ) : (
         <CreatorView />
       )}
