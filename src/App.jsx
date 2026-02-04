@@ -264,6 +264,9 @@ const CreatorView = ({ onCopyLink }) => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareLink, setShareLink] = useState("");
   const [copyStatus, setCopyStatus] = useState("");
+  const [linkName, setLinkName] = useState("");
+  const [copiedAnim, setCopiedAnim] = useState(false);
+  const [chatgptStatus, setChatgptStatus] = useState("");
 
   const messageSuggestions = [
     "You make ordinary days feel special.",
@@ -381,7 +384,13 @@ const CreatorView = ({ onCopyLink }) => {
     const normalizedBase = basePath.endsWith("/")
       ? basePath
       : `${basePath}/`;
-    const link = `${window.location.origin}${normalizedBase}foryou#d=${encoded}`;
+    const safeSlug = linkName
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+    const slugPart = safeSlug ? `${safeSlug}/` : "";
+    const link = `${window.location.origin}${normalizedBase}foryou/${slugPart}#d=${encoded}`;
 
     let copied = false;
     try {
@@ -392,9 +401,11 @@ const CreatorView = ({ onCopyLink }) => {
     }
 
     setShareLink(link);
-    setCopyStatus(
-      copied ? "Link copied to clipboard." : "Copy the link below."
-    );
+    setCopyStatus(copied ? "Link copied to clipboard." : "Copy the link below.");
+    if (copied) {
+      setCopiedAnim(true);
+      window.setTimeout(() => setCopiedAnim(false), 1200);
+    }
     setShareModalOpen(true);
     onCopyLink?.(link);
   };
@@ -550,6 +561,32 @@ const CreatorView = ({ onCopyLink }) => {
                     }}
                   />
                 </label>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const recipient = name.trim()
+                        ? `for ${name.trim()}`
+                        : "for someone you love";
+                      const prompt = `Write 5 short Valentine surprise messages ${recipient}. Keep them warm, respectful, and inclusive for spouse, partner, best friend, or family. Each message should be 1-2 sentences.`;
+                      try {
+                        await navigator.clipboard.writeText(prompt);
+                        setChatgptStatus("Prompt copied. Paste it into ChatGPT.");
+                      } catch (error) {
+                        setChatgptStatus(
+                          "Open ChatGPT and paste this prompt: " + prompt
+                        );
+                      }
+                      window.open("https://chatgpt.com/", "_blank", "noopener");
+                    }}
+                    className="rounded-full border-2 border-rose/30 bg-white/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-wine hover:border-rose/60 transition-all"
+                  >
+                    Get Message Ideas (ChatGPT)
+                  </button>
+                  {chatgptStatus && (
+                    <span className="text-xs text-wine/60">{chatgptStatus}</span>
+                  )}
+                </div>
 
                 <div className="grid gap-3 rounded-2xl border-2 border-rose/10 bg-gradient-to-br from-white/60 to-rose/5 p-5">
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
@@ -721,7 +758,7 @@ const CreatorView = ({ onCopyLink }) => {
 
                 <div className="grid gap-3">
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                    Auto-Generate Meme Template
+                    Playful Templates
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                     {memeTemplates.map((template) => (
@@ -731,7 +768,8 @@ const CreatorView = ({ onCopyLink }) => {
                         onClick={() => {
                           setMemeTemplate(template.id);
                           // Use meme generator API
-                          const memeText = message || "Will you be my Valentine?";
+                          const memeText =
+                            message || "I made something special for you.";
                           const encodedText = encodeURIComponent(memeText);
                           setImageUrl(`https://api.memegen.link/images/${template.id}/${encodedText}.png?watermark=none`);
                         }}
@@ -763,7 +801,7 @@ const CreatorView = ({ onCopyLink }) => {
                     Preview & <span className="text-rose">send</span>
                   </h2>
                   <p className="text-sm text-wine/70">
-                    Last look before you slide into their DMs
+                    Last look before you share the surprise
                   </p>
                 </div>
 
@@ -788,6 +826,7 @@ const CreatorView = ({ onCopyLink }) => {
                     ))}
                   </div>
                 </div>
+
 
                 <div className="relative rounded-3xl border-2 border-rose/25 bg-gradient-to-br from-white/90 to-rose/5 p-6 sm:p-8 text-center shadow-xl">
                   <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-transparent via-white/10 to-transparent" />
@@ -845,7 +884,7 @@ const CreatorView = ({ onCopyLink }) => {
                         </div>
                         <div>
                           <p className="text-xs font-bold uppercase tracking-[0.3em] text-rose">
-                          Mood: {vibe.label}
+                            Mood: {vibe.label}
                           </p>
                           <p className="text-xs text-wine/60">Sent with 💖</p>
                         </div>
@@ -873,8 +912,8 @@ const CreatorView = ({ onCopyLink }) => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                   <div className="glass-card rounded-2xl p-4">
                     <div className="text-3xl mb-2">📱</div>
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose mb-1">Send to DMs</p>
-                    <p className="text-xs text-wine/60">Copy link and slide in</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-rose mb-1">Share the Link</p>
+                    <p className="text-xs text-wine/60">Copy and send anywhere</p>
                   </div>
                   <div className="glass-card rounded-2xl p-4">
                     <div className="text-3xl mb-2">🎮</div>
@@ -962,7 +1001,11 @@ const CreatorView = ({ onCopyLink }) => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setShareModalOpen(false)}
+                  onClick={() => {
+                    setShareModalOpen(false);
+                    setCopiedAnim(false);
+                    setCopyStatus("");
+                  }}
                   className="rounded-full border border-rose/30 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-wine hover:bg-rose/10"
                 >
                   Close
@@ -990,13 +1033,18 @@ const CreatorView = ({ onCopyLink }) => {
                     try {
                       await navigator.clipboard.writeText(shareLink);
                       setCopyStatus("Link copied to clipboard.");
+                      setCopiedAnim(true);
+                      window.setTimeout(() => setCopiedAnim(false), 1200);
                     } catch (error) {
                       setCopyStatus("Copy failed. Please copy manually.");
                     }
                   }}
-                  className="rounded-full bg-wine px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white"
+                  className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all ${copiedAnim
+                      ? "bg-green-500 scale-105 shadow-lg"
+                      : "bg-wine"
+                    }`}
                 >
-                  Copy Link
+                  {copiedAnim ? "Copied!" : "Copy Link"}
                 </button>
                 <button
                   type="button"
@@ -1250,7 +1298,7 @@ const ReceiverView = ({ payload, error }) => {
             >
               Hey <GlitchText>{payload.name}</GlitchText>,
               <br />
-              <span className="text-rose">Will you be mine?</span> 👀
+              <span className="text-rose">I made something for you.</span> 🎁
             </motion.h2>
 
             <motion.p
@@ -1258,9 +1306,8 @@ const ReceiverView = ({ payload, error }) => {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="mt-4 max-w-2xl text-base text-wine/70 sm:text-lg px-4 py-3 rounded-2xl bg-white/50 backdrop-blur-sm"
             >
-              <span className="font-medium text-rose">⚠️ Important Decision:</span> Choose wisely...
-              The "Yes" button is friendly & ready, but the "No" button has ✨ commitment issues ✨
-              and might need some convincing.
+              <span className="font-medium text-rose">💌 A small surprise:</span>{" "}
+              Tap to open it. The “Not now” button is a little shy and may move.
             </motion.p>
 
             <motion.div
@@ -1270,10 +1317,10 @@ const ReceiverView = ({ payload, error }) => {
               className="mt-4 flex flex-wrap gap-2 justify-center"
             >
               <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-rose/10 text-rose">
-                <Heart className="h-3 w-3" /> Romantic Mode: ON
+                <Heart className="h-3 w-3" /> Surprise Mode: ON
               </span>
               <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-blue-500/10 text-blue-600">
-                <Gamepad2 className="h-3 w-3" /> Game Difficulty: {payload.name?.length > 10 ? "Hard" : "Medium"}
+                <Gamepad2 className="h-3 w-3" /> Friendly Challenge
               </span>
               <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-green-500/10 text-green-600">
                 <Trophy className="h-3 w-3" /> Catch Streak: 0
@@ -1285,7 +1332,7 @@ const ReceiverView = ({ payload, error }) => {
               transition={{ duration: 0.7, delay: 0.1 }}
               className="mt-4 max-w-2xl text-base text-wine/70 sm:text-lg"
             >
-              Choose wisely... one button is chill, the other has ✨ commitment issues ✨
+              Choose a button to open your surprise.
             </motion.p>
 
             {insults.length > 0 && (
@@ -1333,7 +1380,7 @@ const ReceiverView = ({ payload, error }) => {
                 className="group relative rounded-full bg-gradient-to-r from-rose to-pink-400 px-12 py-5 text-xl font-bold text-white shadow-2xl"
               >
                 <span className="flex items-center justify-center gap-3">
-                  YES!
+                  Open the Surprise
                   <Heart className="h-6 w-6 group-hover:fill-white transition-colors" />
                 </span>
                 <span className="absolute -inset-1 rounded-full bg-rose/30 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -1355,7 +1402,7 @@ const ReceiverView = ({ payload, error }) => {
                   aria-disabled="true"
                 >
                   <span className="flex items-center gap-2">
-                    No
+                    Not now
                     <Ghost className="h-5 w-5" />
                   </span>
                 </button>
@@ -1384,7 +1431,7 @@ const ReceiverView = ({ payload, error }) => {
                 aria-disabled="true"
               >
                 <span className="flex items-center gap-2">
-                  No
+                  Not now
                   <Ghost className="h-5 w-5 animate-pulse" />
                 </span>
               </motion.button>
